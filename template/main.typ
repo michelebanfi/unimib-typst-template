@@ -1,7 +1,7 @@
 #import "@preview/modern-unimib-thesis:0.1.0": template
 
 #template(
-  title: "Higher Order Quantum Theory for Dummies", 
+  title: "Higher Order Quantum Theory, the \"Double-Ket\" notation", 
   candidate:(
     name: "Michele Banfi",
     number: "869294"
@@ -14,4 +14,4 @@
   logo: image("logo_unimib.png", width: 30%),
   supervisor: "Prof. Luca Manzi",
   co-supervisor: ("Saira Sanchez", "Prof. Annalisa Di Pasquali")
-  )
+)
