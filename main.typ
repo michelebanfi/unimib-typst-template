@@ -9,6 +9,7 @@
   course:(),
   date: (),
   logo: none,
+  acknowledgments: none,
   body
 ) = {
   set document(title: title, author: candidate.name)
@@ -71,5 +72,15 @@
   set page(header: context {
     none
   })
+  if acknowledgments != none {
+    pagebreak()
+    block[
+      #set align(left)
+      #text(1.3em, weight: "bold", [Acknowledgments]) \
+      #v(20pt)
+      #acknowledgments
+    ]
+  }
+  pagebreak()
   bibliography("refs.bib")
 }
