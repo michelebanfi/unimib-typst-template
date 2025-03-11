@@ -11,9 +11,10 @@
   school: "Scuola di Scienze",
   department: "Dipartimento di Fisica",
   course: "Master Degree in Artificial Intelligence for Science and Technology",
-  logo: image("logo_unimib.png", width: 30%),
+  logo: image("images/logo_unimib.png", width: 30%),
   supervisor: "Prof. Luca Manzi",
-  co-supervisor: ("Saira Sanchez", "Prof. Annalisa Di Pasquali")
+  co-supervisor: ("Saira Sanchez", "Prof. Annalisa Di Pasquali"),
+  lang: "en",
 )
 
 = Introduction
@@ -28,5 +29,5 @@ $<POVM>
 = Preliminaries
 @Yoder_2014
 
-= Acknowledgments
+= Acknowledgments // Ringraziamenti This is a special title name
 #lorem(100)
