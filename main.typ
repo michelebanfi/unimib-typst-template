@@ -18,8 +18,15 @@
   set math.equation(numbering: "(1)")
   set heading(numbering: "1.1.1")
   show heading.where(level: 1): item => {
-    if item.body == [Bibliography] or item.body == [Contents] {
+    if item.body == [Contents] {
       item
+    } else if item.body == [Bibliography] or item.body == [Acknowledgments] {
+      pagebreak()
+      block(width: 100%, height: 20%)[
+        #set align(left + horizon)
+        #set text(1.3em, weight: "bold")
+        #text([#item.body])
+      ]
     } else {
       pagebreak()
       block(width: 100%, height: 20%)[
@@ -27,6 +34,14 @@
             #set text(1.3em, weight: "bold")
             #text([Chapter #counter(heading).display() \ #item.body])
           ]
+    }
+  }
+
+  show outline.entry: it => {
+    if it.element.body == [Acknowledgments] or it.element.body == [Bibliography] {
+      []
+    } else {
+      it
     }
   }
   
@@ -68,19 +83,7 @@
     align(if calc.odd(page) { right } else { left })[#page]
   })
   body
-  pagebreak()
-  set page(header: context {
-    none
-  })
-  if acknowledgments != none {
-    pagebreak()
-    block[
-      #set align(left)
-      #text(1.3em, weight: "bold", [Acknowledgments]) \
-      #v(20pt)
-      #acknowledgments
-    ]
-  }
+
   pagebreak()
   bibliography("refs.bib")
 }
