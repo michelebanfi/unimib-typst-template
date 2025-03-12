@@ -10,7 +10,7 @@
   date: (),
   logo: none,
   lang: "en",
-  bib:(),
+  bib: (),
   body
 ) = {
   // Language dictionary
@@ -41,7 +41,14 @@
   
   // Get translation dictionary for selected language, default to English
   let t = if lang in translations { translations.at(lang) } else { translations.at("en") }
-  
+
+    
+  // State to track the current chapter
+  let current-chapter = state("current-chapter", none)
+
+  // State to track new chapter pages
+  let chapter-start-page = state("chapter-start-page", none)
+
   set document(title: title, author: candidate.name)
   show link: underline
   set text(size: 13pt, lang: lang)
@@ -52,13 +59,21 @@
       item
     } else if item.body == [#t.bibliography] or item.body == [#t.acknowledgments] {
       pagebreak()
+      // Mark this page as a chapter start
+      chapter-start-page.update(counter(page).get().first())
       block(width: 100%, height: 20%)[
         #set align(left + horizon)
         #set text(1.3em, weight: "bold")
         #text([#item.body])
       ]
+    // Update current chapter for special sections
+    current-chapter.update(item.body)
     } else {
       pagebreak()
+      // Mark this page as a chapter start
+      chapter-start-page.update(counter(page).get().first())
+      // Update current chapter 
+      current-chapter.update(item.body)
       block(width: 100%, height: 20%)[
             #set align(left + horizon)
             #set text(1.3em, weight: "bold")
@@ -106,12 +121,43 @@
   align(center + bottom, text(weight: "bold", [#t.academic_year: #date]))
   pagebreak()
   outline()
-  pagebreak()
   
-  set page(header: context {
-    let page = counter(page).get().first()
-    align(if calc.odd(page) { right } else { left })[#page]
-  })
+  set page(
+    header: context {
+      let page = counter(page).get().first()
+      let chapter-num = counter(heading).get().first()
+      let chapter-text = current-chapter.get()
+      
+      // Only show header if not a chapter start page
+      if (chapter-text != none) and not (chapter-start-page.get() + 1) == page {
+        let header-text = if chapter-num > 0 {
+          //[#t.chapter #chapter-num. #chapter-text]
+          [#chapter-start-page.get() ]
+          [#page]
+        } else {
+          [#chapter-text]
+        }
+  
+        if calc.odd(page){
+          text(upper(header-text), style: "italic")
+          h(1fr)
+          [#page]
+        }else{
+          [#page]
+          h(1fr)
+          text(upper(header-text), style: "italic")
+        }
+      }
+    },
+    footer: context {
+      let page = counter(page).get().first()
+      
+      // Show centered page number in footer only for chapter start pages
+      if chapter-start-page.get() == page {
+        align(center, [#page])
+      }
+    }
+  )
   body
 
   if bib != () {
