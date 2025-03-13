@@ -39,6 +39,7 @@
     )
   )
   
+  
   // Get translation dictionary for selected language, default to English
   let t = if lang in translations { translations.at(lang) } else { translations.at("en") }
 
@@ -51,6 +52,7 @@
 
   set document(title: title, author: candidate.name)
   show link: underline
+  set page(numbering: "1")
   set text(size: 13pt, lang: lang)
   set math.equation(numbering: "(1)")
   set heading(numbering: "1.1.1")
@@ -82,6 +84,46 @@
     }
   }
 
+
+  set page(
+    header: context {
+      let chapters = query(selector(heading.where(level: 1)))
+              // Get the current page
+        let current-page = counter(page).get().first()
+            
+        // Check if current page is any chapter start page
+        let chapter-pages = chapters.map(c => c.location().page())
+        if current-page in chapter-pages {
+          return // Don't show header on chapter start pages
+        }
+
+        // Find which chapter we're currently in
+        let relevant-chapters = chapters.filter(c => c.location().page() <= current-page)
+        if relevant-chapters.len() > 0 {
+          let current-chapter = relevant-chapters.last()
+          let chapter-text = current-chapter.body
+          
+          if calc.odd(current-page) {
+          text(upper(chapter-text), style: "italic")
+          h(1fr)
+          [#current-page]
+          } else {
+          [#current-page]
+          h(1fr)
+          text(upper(chapter-text), style: "italic")
+          }
+        }
+    },
+    footer: context {
+      let page = counter(page).get().first()
+      
+      // Show centered page number in footer only for chapter start pages
+      if chapter-start-page.get() == page {
+        align(center, [#page])
+      }
+    }
+  )
+
   show outline.entry: it => {
     if it.element.body == [#t.acknowledgments] or it.element.body == [#t.bibliography] {
       []
@@ -90,6 +132,7 @@
     }
   }
   
+  //------------- FRONTESPIZIO
   align(center, block[
     #text(smallcaps(university), stretch: 142%) \
     *#school* \
@@ -119,45 +162,10 @@
   ])
 
   align(center + bottom, text(weight: "bold", [#t.academic_year: #date]))
+
   pagebreak()
   outline()
   
-  set page(
-    header: context {
-      let page = counter(page).get().first()
-      let chapter-num = counter(heading).get().first()
-      let chapter-text = current-chapter.get()
-      
-      // Only show header if not a chapter start page
-      if (chapter-text != none) and not (chapter-start-page.get() + 1) == page {
-        let header-text = if chapter-num > 0 {
-          //[#t.chapter #chapter-num. #chapter-text]
-          [#chapter-start-page.get() ]
-          [#page]
-        } else {
-          [#chapter-text]
-        }
-  
-        if calc.odd(page){
-          text(upper(header-text), style: "italic")
-          h(1fr)
-          [#page]
-        }else{
-          [#page]
-          h(1fr)
-          text(upper(header-text), style: "italic")
-        }
-      }
-    },
-    footer: context {
-      let page = counter(page).get().first()
-      
-      // Show centered page number in footer only for chapter start pages
-      if chapter-start-page.get() == page {
-        align(center, [#page])
-      }
-    }
-  )
   body
 
   if bib != () {

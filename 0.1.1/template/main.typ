@@ -6,8 +6,8 @@
 #show: template.with(
   title: "Higher Order Quantum Theory, the \"Double-Ket\" notation", 
   candidate:(
-    name: "Michele Banfi",
-    number: "869294"
+    name: "Michelino Banfi",
+    number: "123456"
   ),
   date: "2024/2025", 
   university: "Universitá degli studi Milano - Bicocca",
