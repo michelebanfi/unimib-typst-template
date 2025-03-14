@@ -59,6 +59,7 @@
   show heading.where(level: 1): item => {
     if item.body == [#t.contents] {
       item
+      v(30pt)
     } else if item.body == [#t.bibliography] or item.body == [#t.acknowledgments] {
       pagebreak()
       // Mark this page as a chapter start
